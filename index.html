@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bingo da Centralidade</title>
+
+<style>
+  :root{
+    --azul:#1d2b53;
+    --amarelo:#f5b51b;
+    --roxo:#5c4ca3;
+    --verde:#17845b;
+    --azul-claro:#2978b5;
+    --fundo:#f7f2df;
+    --cinza:#e8e8e8;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    html, body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family:Arial, sans-serif;
+  background:var(--fundo);
+  color:var(--azul);
+}
+
+body{
+  overflow-y:auto;
+}
+    font-family: Arial, sans-serif;
+    background:var(--fundo);
+    color:var(--azul);
+  }
+
+  .app{
+  width:100vw;
+  min-height:100vh;
+  box-sizing:border-box;
+  padding:28px 48px 22px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+}
+
+  .topo{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+  }
+
+  .badge{
+    background:var(--amarelo);
+    color:var(--azul);
+    padding:10px 22px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:18px;
+  }
+
+  .tela-cheia{
+    background:var(--azul);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:12px 18px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .contador-grande{
+    text-align:center;
+    font-size:28px;
+    font-weight:800;
+    margin:18px 0 12px;
+  }
+
+  .barra{
+    width:100%;
+    height:16px;
+    background:var(--cinza);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+
+  .progresso{
+    height:100%;
+    width:0%;
+    background:var(--amarelo);
+    transition:width .3s ease;
+  }
+
+  .conteudo{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px 30px;
+  }
+
+  h1{
+    font-size:48px;
+    margin:0 0 28px;
+    color:var(--azul);
+  }
+
+  .situacao{
+    font-size:34px;
+    line-height:1.35;
+    max-width:1150px;
+    margin:0 auto 32px;
+  }
+
+  .pergunta{
+    font-size:30px;
+    font-weight:800;
+    color:var(--roxo);
+    max-width:1100px;
+    margin:0 auto;
+  }
+
+  .resposta{
+    display:none;
+    margin-top:34px;
+    font-size:40px;
+    font-weight:900;
+    color:var(--verde);
+  }
+
+  .todas-respostas{
+  display:none;
+  width:90%;
+  max-width:1100px;
+  margin-top:24px;
+  text-align:left;
+  background:var(--fundo);
+  border-radius:20px;
+  padding:20px 28px;
+  font-size:18px;
+  line-height:1.35;
+  box-sizing:border-box;
+}
+
+  .todas-respostas h2{
+    text-align:center;
+    margin:0 0 14px;
+    color:var(--azul);
+  }
+
+  .todas-respostas ol{
+    margin:0;
+    padding-left:28px;
+  }
+
+  .barra-inferior{
+    margin-top:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+  }
+
+  .navegacao, .comandos{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .navegacao{
+    justify-content:flex-start;
+  }
+
+  .comandos{
+    justify-content:flex-end;
+  }
+
+  button{
+    border:none;
+    border-radius:12px;
+    padding:14px 20px;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  button:hover{
+    transform:translateY(-2px);
+    opacity:.92;
+  }
+
+  .btn-nav{
+    background:var(--azul);
+    color:#fff;
+    font-size:19px;
+    padding:16px 26px;
+  }
+
+  .btn-mostrar{
+    background:var(--verde);
+    color:#fff;
+  }
+
+  .btn-ocultar{
+    background:var(--azul-claro);
+    color:#fff;
+  }
+
+  .btn-gabarito{
+    background:var(--roxo);
+    color:#fff;
+  }
+
+  .btn-reiniciar{
+    background:#ddd;
+    color:var(--azul);
+  }
+
+  .propaganda{
+    margin-top:18px;
+    background:var(--azul);
+    color:#fff;
+    border-radius:18px;
+    padding:14px 22px;
+    text-align:center;
+    font-size:16px;
+    line-height:1.35;
+  }
+
+  .propaganda strong{
+    color:var(--amarelo);
+    font-size:19px;
+  }
+
+  .propaganda span{
+    display:block;
+    margin-top:4px;
+    opacity:.95;
+  }
+
+  @media(max-width:900px){
+    .app{padding:22px;}
+    h1{font-size:36px;}
+    .situacao{font-size:25px;}
+    .pergunta{font-size:23px;}
+    .resposta{font-size:28px;}
+    .barra-inferior{flex-direction:column;align-items:stretch;}
+    .navegacao,.comandos{justify-content:center;}
+  }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="topo">
+    <div class="badge">Bingo da Centralidade</div>
+    <button class="tela-cheia" onclick="telaCheia()">⛶ Tela cheia</button>
+  </div>
+
+  <div class="contador-grande" id="contadorGrande"></div>
+
+  <div class="barra">
+    <div class="progresso" id="progresso"></div>
+  </div>
+
+  <div class="conteudo">
+    <h1 id="titulo"></h1>
+
+    <div class="situacao" id="situacao"></div>
+
+    <div class="pergunta" id="pergunta">
+      Qual decisão mais materializa a centralidade da criança nessa situação?
+    </div>
+
+    <div class="resposta" id="resposta"></div>
+
+    <div class="todas-respostas" id="todasRespostas">
+      <h2>Gabarito do Bingo</h2>
+      <ol id="listaRespostas"></ol>
+    </div>
+  </div>
+
+  <div class="barra-inferior">
+
+    <div class="navegacao">
+      <button class="btn-nav" onclick="anteriorSituacao()">⬅️ Anterior</button>
+      <button class="btn-nav" onclick="proximaSituacao()">Próxima ➡️</button>
+    </div>
+
+    <div class="comandos">
+      <button class="btn-mostrar" onclick="mostrarResposta()">🟢 Mostrar resposta</button>
+      <button class="btn-ocultar" onclick="ocultarResposta()">🔵 Ocultar resposta</button>
+      <button class="btn-gabarito" onclick="mostrarTodasRespostas()">📋 Mostrar gabarito</button>
+      <button class="btn-ocultar" onclick="ocultarTodasRespostas()">🙈 Ocultar gabarito</button>
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Reiniciar</button>
+    </div>
+
+  </div>
+
+  <div class="propaganda">
+    <strong>Gledson Sistemas Educacionais</strong>
+    <span>Desenvolvimento de sistemas, painéis gerenciais, automações e soluções educacionais.</span>
+    <span>Aplicativo desenvolvido por Gledson Figueiredo</span>
+  </div>
+
+</div>
+
+<script>
+const situacoes = [
+  {
+    texto: "Uma professora percebe que a turma demonstra grande interesse por insetos encontrados no jardim da escola. Ela reorganiza o planejamento para que as crianças observem, levantem hipóteses e façam descobertas antes da explicação.",
+    resposta: "Investigação"
+  },
+  {
+    texto: "A escola pretende reorganizar as Eletivas do próximo semestre e quer que as experiências tenham mais sentido para as crianças.",
+    resposta: "Escuta das crianças"
+  },
+  {
+    texto: "Durante o ALE, a professora quer transformar a leitura em uma experiência prazerosa, significativa e conectada ao universo da infância.",
+    resposta: "Leitura deleite"
+  },
+  {
+    texto: "Na organização das brincadeiras do Recreio de Possibilidades, a equipe pedagógica deseja fortalecer o protagonismo infantil.",
+    resposta: "Escolhas reais"
+  },
+  {
+    texto: "No Estudo Orientado, a professora percebe que as crianças aprendem de formas diferentes e precisam descobrir estratégias para estudar melhor.",
+    resposta: "Estratégias de estudo"
+  },
+  {
+    texto: "A escola deseja integrar diferentes componentes curriculares em torno de uma situação vivida pelas próprias crianças na comunidade.",
+    resposta: "Projetos significativos"
+  },
+  {
+    texto: "Depois de uma forte chuva, as crianças começam a fazer muitas perguntas sobre o tempo. Em vez de responder imediatamente, a professora organiza observações, registros e pequenas experiências.",
+    resposta: "Investigação"
+  },
+  {
+    texto: "Antes de planejar uma nova sequência de atividades, a professora reúne a turma para ouvir ideias, curiosidades, preferências e sugestões.",
+    resposta: "Escuta das crianças"
+  },
+  {
+    texto: "Ao final de uma atividade, cada criança é incentivada a refletir sobre o que aprendeu, quais estratégias utilizou e como pode aprender melhor.",
+    resposta: "Estratégias de estudo"
+  },
+  {
+    texto: "A escola organiza um projeto em que as crianças investigam formas de tornar os espaços escolares mais acolhedores e apresentam propostas para a comunidade escolar.",
+    resposta: "Projetos significativos"
+  }
+];
+
+let atual = 0;
+let fim = false;
+
+function carregarSituacao(){
+  fim = false;
+
+  document.getElementById("titulo").innerText = "Situação " + (atual + 1);
+  document.getElementById("situacao").innerText = situacoes[atual].texto;
+  document.getElementById("pergunta").style.display = "block";
+  document.getElementById("resposta").innerText = "Resposta: " + situacoes[atual].resposta;
+  document.getElementById("resposta").style.display = "none";
+  document.getElementById("todasRespostas").style.display = "none";
+
+  document.getElementById("contadorGrande").innerText =
+    "Situação " + (atual + 1) + " de " + situacoes.length;
+
+  const percentual = ((atual + 1) / situacoes.length) * 100;
+  document.getElementById("progresso").style.width = percentual + "%";
+}
+
+function mostrarResposta(){
+  if(!fim){
+    document.getElementById("resposta").style.display = "block";
+  }
+}
+
+function ocultarResposta(){
+  document.getElementById("resposta").style.display = "none";
+}
+
+function mostrarTodasRespostas(){
+  const lista = document.getElementById("listaRespostas");
+  lista.innerHTML = "";
+
+  situacoes.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = "<strong>Situação " + (index + 1) + ":</strong> " + item.resposta;
+    lista.appendChild(li);
+  });
+
+  document.getElementById("todasRespostas").style.display = "block";
+  document.getElementById("resposta").style.display = "none";
+}
+
+function ocultarTodasRespostas(){
+  document.getElementById("todasRespostas").style.display = "none";
+}
+
+function proximaSituacao(){
+  if(atual < situacoes.length - 1){
+    atual++;
+    carregarSituacao();
+  } else {
+    fim = true;
+    document.getElementById("titulo").innerText = "Fim do jogo";
+    document.getElementById("situacao").innerText =
+      "Conferiram a cartela? A primeira mesa certificada conquista o selo de Especialista em Centralidade da Criança e do Tempo da Infância.";
+    document.getElementById("pergunta").style.display = "none";
+    document.getElementById("resposta").style.display = "none";
+    document.getElementById("todasRespostas").style.display = "none";
+    document.getElementById("contadorGrande").innerText = "Jogo concluído";
+    document.getElementById("progresso").style.width = "100%";
+  }
+}
+
+function anteriorSituacao(){
+  if(atual > 0){
+    atual--;
+    carregarSituacao();
+  }
+}
+
+function reiniciar(){
+  atual = 0;
+  carregarSituacao();
+}
+
+function telaCheia(){
+  if(document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen();
+  }
+}
+
+document.addEventListener("keydown", function(event){
+  if(event.key === "ArrowRight"){
+    proximaSituacao();
+  }
+
+  if(event.key === "ArrowLeft"){
+    anteriorSituacao();
+  }
+
+  if(event.code === "Space"){
+    event.preventDefault();
+    mostrarResposta();
+  }
+
+  if(event.key === "Escape"){
+    ocultarResposta();
+    ocultarTodasRespostas();
+  }
+});
+
+carregarSituacao();
+</script>
+
+</body>
+</html>
